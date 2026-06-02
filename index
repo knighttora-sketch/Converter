@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konverter Email:Pass ke JSON</title>
+    <style>
+        body { background: #0f172a; color: #f8fafc; font-family: sans-serif; padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 800px; background: #1e293b; padding: 2rem; border-radius: 12px; border: 1px solid #334155; }
+        h2 { color: #6366f1; margin-bottom: 20px; text-align: center; }
+        
+        .flex-box { display: flex; gap: 20px; }
+        .box { flex: 1; display: flex; flex-direction: column; }
+        
+        label { margin-bottom: 10px; font-weight: bold; color: #94a3b8; }
+        textarea { 
+            height: 300px; background: #0f172a; border: 1px solid #475569; 
+            color: white; padding: 10px; border-radius: 6px; font-family: monospace; resize: vertical;
+        }
+        
+        button { 
+            width: 100%; padding: 12px; background: #22c55e; color: white; border: none; 
+            border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1rem;
+        }
+        button:hover { background: #16a34a; }
+        
+        .hint { font-size: 0.8rem; color: #64748b; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Konverter Email:Pass ke JSON</h2>
+        
+        <div class="flex-box">
+            <!-- KIRI: INPUT -->
+            <div class="box">
+                <label>INPUT (Format Email:Password)</label>
+                <textarea id="inputText" placeholder="user1@gmail.com:pass123&#10;user2@yahoo.com:kata&#10;user3@hotmail.com:rahasia"></textarea>
+                <p class="hint">Pisahkan dengan baris baru (Enter).</p>
+            </div>
+
+            <!-- KANAN: OUTPUT -->
+            <div class="box">
+                <label>OUTPUT (JSON siap Import)</label>
+                <textarea id="outputText" readonly placeholder="Hasil JSON akan muncul di sini..."></textarea>
+                <p class="hint">Status otomatis diisi "active".</p>
+            </div>
+        </div>
+
+        <button onclick="window.convert()">CONVERT SEKARANG</button>
+    </div>
+
+    <script>
+        window.convert = function() {
+            const input = document.getElementById('inputText').value;
+            const lines = input.split('\n');
+            
+            const result = [];
+
+            lines.forEach(line => {
+                line = line.trim();
+                if (line) {
+                    // Cari pemisah titik dua (:)
+                    // Kita split hanya pada titik dua PERTAMA, jadi jika password ada titik dua tidak masalah
+                    const separatorIndex = line.indexOf(':');
+                    
+                    if (separatorIndex > -1) {
+                        const email = line.substring(0, separatorIndex).trim();
+                        const pass = line.substring(separatorIndex + 1).trim();
+
+                        if (email && pass) {
+                            result.push({
+                                email: email,
+                                password: pass,
+                                status: "active"
+                            });
+                        }
+                    }
+                }
+            });
+
+            // Tampilkan hasil
+            const jsonOutput = JSON.stringify(result, null, 2);
+            document.getElementById('outputText').value = jsonOutput;
+        };
+    </script>
+</body>
+</html>
